@@ -3,95 +3,551 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Display Spreadsheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dusk Rose Pty (Ltd) - Analyze Data</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .breadcrumb {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
         }
 
         .container {
-            max-width: 90%;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
+            max-width: 95%;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-summary {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        .table-container {
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .table-wrapper {
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        th,
-        td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
+            background: white;
         }
 
         th {
-            background-color: #f5f5f5;
-        }
-
-        button {
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.2s ease;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .numeric-col {
+            text-align: right;
+            font-weight: 500;
+            color: #2d5aa0;
+        }
+
+        .calculation-panel {
+            background: #f8fafc;
+            padding: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .columns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .column-option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
             cursor: pointer;
-            margin-top: 10px;
+            position: relative;
         }
 
-        button:hover {
-            background-color: #45a049;
+        .column-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
         }
 
-        .checkbox-container {
-            margin-top: 15px;
+        .column-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .column-checkbox {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .column-label {
+            font-weight: 600;
+            color: #2d3748;
+            display: block;
+            cursor: pointer;
+        }
+
+        .column-preview {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        .operation-section {
+            margin-bottom: 2rem;
+        }
+
+        .operation-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .operation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .operation-option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .operation-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .operation-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .operation-radio {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .operation-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .operation-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .operation-desc {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+            
+            .content-header {
+                padding: 1.5rem;
+            }
+            
+            .table-container {
+                padding: 1rem;
+            }
+            
+            .calculation-panel {
+                padding: 1.5rem;
+            }
+            
+            .data-summary {
+                gap: 1rem;
+            }
+            
+            .columns-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .operation-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
+    <header class="header">
+        <h1>📊 Dusk Rose Pty (Ltd)</h1>
+        <div class="breadcrumb">Upload → <strong>Analyze</strong> → Results</div>
+    </header>
+
     <div class="container">
-        <h1>Spreadsheet Data</h1>
-        <table>
-            <tr>
-                {{range .Headers}}<th>{{.}}</th>{{end}}
-            </tr>
-            {{range .Rows}}
-            <tr>
-                {{range .}}<td>{{.}}</td>{{end}}
-            </tr>
-            {{end}}
-        </table>
-
-        <form action="/calculate" method="post">
-            <div class="checkbox-container">
-                <h3>Select columns for calculation:</h3>
-                {{range $index, $col := .NumericCols}}
-                <label>
-                    <input type="checkbox" name="cols" value="{{index $.Headers $col}}"> {{index $.Headers $col}}
-                </label><br>
-                {{end}}
+        <div class="content-header">
+            <h2 class="content-title">Your Spreadsheet Data</h2>
+            <div class="data-summary">
+                <div class="summary-item">
+                    <div class="summary-value">{{len .Headers}}</div>
+                    <div class="summary-label">Columns</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{len .Rows}}</div>
+                    <div class="summary-label">Rows</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{len .NumericCols}}</div>
+                    <div class="summary-label">Numeric Columns</div>
+                </div>
             </div>
+        </div>
 
-            <div class="checkbox-container">
-                <h3>Operation:</h3>
-                <select name="operation" required>
-                    <option value="sum">Sum</option>
-                    <option value="average">Average</option>
-                </select>
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            {{range $index, $header := .Headers}}
+                            <th {{if contains $.NumericCols $index}}class="numeric-col"{{end}}>
+                                {{$header}}
+                                {{if contains $.NumericCols $index}}<span style="margin-left: 0.5rem;">📊</span>{{end}}
+                            </th>
+                            {{end}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Rows}}
+                        <tr>
+                            {{range $cellIndex, $cell := .}}
+                            <td {{if contains $.NumericCols $cellIndex}}class="numeric-col"{{end}}>{{$cell}}</td>
+                            {{end}}
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <button type="submit">Calculate</button>
-        </form>
+        <div class="calculation-panel">
+            <h3 class="panel-title">
+                🧮 Calculate Results
+            </h3>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <form action="/calculate" method="post" id="calcForm">
+                <div class="operation-section">
+                    <div class="operation-title">Choose Operation</div>
+                    <div class="operation-grid">
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="sum" class="operation-radio" required>
+                            <div class="operation-icon">➕</div>
+                            <div class="operation-name">Sum</div>
+                            <div class="operation-desc">Add all values</div>
+                        </label>
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="average" class="operation-radio" required>
+                            <div class="operation-icon">📊</div>
+                            <div class="operation-name">Average</div>
+                            <div class="operation-desc">Calculate mean</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="operation-section">
+                    <div class="operation-title">Select Numeric Columns</div>
+                    <div class="columns-grid">
+                        {{range $index, $col := .NumericCols}}
+                        <label class="column-option">
+                            <input type="checkbox" name="cols" value="{{index $.Headers $col}}" class="column-checkbox">
+                            <span class="column-label">{{index $.Headers $col}}</span>
+                            <div class="column-preview">Column {{add $col 1}}</div>
+                        </label>
+                        {{end}}
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-secondary">
+                        ⬅️ Upload New File
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="calculateBtn" disabled>
+                        🚀 Calculate Results
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <script>
+        // Interactive form handling
+        const form = document.getElementById('calcForm');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const columnCheckboxes = document.querySelectorAll('input[name="cols"]');
+        const operationRadios = document.querySelectorAll('input[name="operation"]');
+
+        // Handle column selection
+        columnCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = this.closest('.column-option');
+                if (this.checked) {
+                    label.classList.add('selected');
+                } else {
+                    label.classList.remove('selected');
+                }
+                updateCalculateButton();
+            });
+        });
+
+        // Handle operation selection
+        operationRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.operation-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.closest('.operation-option').classList.add('selected');
+                updateCalculateButton();
+            });
+        });
+
+        function updateCalculateButton() {
+            const selectedColumns = document.querySelectorAll('input[name="cols"]:checked');
+            const selectedOperation = document.querySelector('input[name="operation"]:checked');
+            
+            if (selectedColumns.length > 0 && selectedOperation) {
+                calculateBtn.disabled = false;
+                hideError();
+            } else {
+                calculateBtn.disabled = true;
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        // Form validation
+        form.addEventListener('submit', function(e) {
+            const selectedColumns = document.querySelectorAll('input[name="cols"]:checked');
+            const selectedOperation = document.querySelector('input[name="operation"]:checked');
+
+            if (selectedColumns.length === 0) {
+                e.preventDefault();
+                showError('Please select at least one numeric column to calculate.');
+                return;
+            }
+
+            if (!selectedOperation) {
+                e.preventDefault();
+                showError('Please select a calculation operation.');
+                return;
+            }
+
+            // Show loading state
+            calculateBtn.disabled = true;
+            calculateBtn.innerHTML = '⏳ Calculating...';
+        });
+
+        // Table row highlighting
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f4ff';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+            });
+        });
+
+        // Helper function for template (add function)
+        window.add = function(a, b) {
+            return a + b;
+        };
+
+        // Helper function to check if array contains value
+        window.contains = function(arr, val) {
+            return arr && arr.includes(val);
+        };
+    </script>
 </body>
 
 </html>

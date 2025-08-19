@@ -3,57 +3,377 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Upload Spreadsheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dusk Rose Pty (Ltd) - Upload Spreadsheet</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        input[type=file] {
-            margin: 20px 0;
-        }
-
-        button {
-            background-color: #4CAF50;
+        .header h1 {
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .upload-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .upload-title {
+            font-size: 2rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .upload-subtitle {
+            color: #718096;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background: #f8fafc;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: #e6f3ff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .file-upload-area:hover .upload-icon {
+            color: #667eea;
+        }
+
+        .file-input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #45a049;
+        .upload-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
         }
 
-        p.allowed {
-            font-size: 0.9em;
-            color: #555;
+        .upload-hint {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .file-info {
+            background: #f0f4ff;
+            border: 1px solid #667eea;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            min-width: 150px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .feature {
+            text-align: center;
+            color: #4a5568;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .upload-container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            
+            .upload-title {
+                font-size: 1.5rem;
+            }
+            
+            .file-upload-area {
+                padding: 2rem 1rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Upload Spreadsheet</h1>
-        <form action="/display" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".csv,.xlsx,.xls" required>
-            <p class="allowed">Allowed file types: .xlsx, .xls, .csv</p>
-            <button type="submit">Upload</button>
-        </form>
-    </div>
+    <header class="header">
+        <h1>📊 Dusk Rose Pty (Ltd)</h1>
+    </header>
+
+    <main class="main-content">
+        <div class="upload-container">
+            <h2 class="upload-title">Upload Your Spreadsheet</h2>
+            <p class="upload-subtitle">Analyze your data with powerful calculations</p>
+
+            <form id="uploadForm" action="/display" method="post" enctype="multipart/form-data">
+                <div class="file-upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Drop your file here or click to browse</div>
+                    <div class="upload-hint">Supports Excel (.xlsx, .xls) and CSV files up to 10MB</div>
+                    <input type="file" name="file" class="file-input" id="fileInput" accept=".csv,.xlsx,.xls" required>
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <strong>Selected file:</strong> <span id="fileName"></span><br>
+                    <span id="fileSize"></span>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <span>Processing your file...</span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    Analyze Spreadsheet
+                </button>
+            </form>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">Fast Processing</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">Secure Upload</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-text">Advanced Analytics</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const submitBtn = document.getElementById('submitBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const loading = document.getElementById('loading');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            // Validate file type
+            const allowedTypes = ['.csv', '.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedTypes.includes(fileExtension)) {
+                alert('Please select a valid file type: CSV, XLSX, or XLS');
+                return;
+            }
+
+            // Validate file size (10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                alert('File size must be less than 10MB');
+                return;
+            }
+
+            // Show file info
+            fileName.textContent = file.name;
+            fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
+            fileInfo.classList.add('show');
+            submitBtn.disabled = false;
+            
+            // Update upload area appearance
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.querySelector('.upload-text').textContent = 'File ready to upload';
+            uploadArea.querySelector('.upload-icon').textContent = '✓';
+            uploadArea.querySelector('.upload-icon').style.color = '#48bb78';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Form submission with loading state
+        uploadForm.addEventListener('submit', (e) => {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            loading.classList.add('show');
+        });
+    </script>
 </body>
 
 </html>
