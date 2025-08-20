@@ -12,14 +12,20 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        
+        @font-face {
+    font-family: 'Duskrose';
+    src: url('duskrose.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
+body {
+    font-family: 'Duskrose';
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #2d3748;
+}
         .header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);

@@ -98,7 +98,7 @@ func main() {
 	http.Handle("/upload.css", http.StripPrefix("/", fs))
 	http.Handle("/display.css", http.StripPrefix("/", fs))
 	http.Handle("/results.css", http.StripPrefix("/", fs))
-
+	http.Handle("/duskrose.woff2", http.StripPrefix("/", fs))
 	// App endpoints
 	http.HandleFunc("/", uploadHandler)
 	http.HandleFunc("/display", displayHandler)

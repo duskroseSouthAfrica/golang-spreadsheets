@@ -12,12 +12,21 @@
             box-sizing: border-box;
         }
 
+        @font-face {
+            font-family: 'Duskrose';
+            src: url('duskrose.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Duskrose';
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #2d3748;
         }
+
+
 
         .header {
             background: rgba(255, 255, 255, 0.1);
@@ -322,27 +331,27 @@
                 margin: 1rem;
                 max-width: calc(100% - 2rem);
             }
-            
+
             .content-header {
                 padding: 1.5rem;
             }
-            
+
             .table-container {
                 padding: 1rem;
             }
-            
+
             .calculation-panel {
                 padding: 1.5rem;
             }
-            
+
             .data-summary {
                 gap: 1rem;
             }
-            
+
             .columns-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .operation-grid {
                 grid-template-columns: 1fr;
             }
@@ -381,7 +390,7 @@
                     <thead>
                         <tr>
                             {{range $index, $header := .Headers}}
-                            <th {{if contains $.NumericCols $index}}class="numeric-col"{{end}}>
+                            <th {{if contains $.NumericCols $index}}class="numeric-col" {{end}}>
                                 {{$header}}
                                 {{if contains $.NumericCols $index}}<span style="margin-left: 0.5rem;">📊</span>{{end}}
                             </th>
@@ -392,7 +401,7 @@
                         {{range .Rows}}
                         <tr>
                             {{range $cellIndex, $cell := .}}
-                            <td {{if contains $.NumericCols $cellIndex}}class="numeric-col"{{end}}>{{$cell}}</td>
+                            <td {{if contains $.NumericCols $cellIndex}}class="numeric-col" {{end}}>{{$cell}}</td>
                             {{end}}
                         </tr>
                         {{end}}
@@ -462,7 +471,7 @@
 
         // Handle column selection
         columnCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
+            checkbox.addEventListener('change', function () {
                 const label = this.closest('.column-option');
                 if (this.checked) {
                     label.classList.add('selected');
@@ -475,7 +484,7 @@
 
         // Handle operation selection
         operationRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 document.querySelectorAll('.operation-option').forEach(opt => {
                     opt.classList.remove('selected');
                 });
@@ -487,7 +496,7 @@
         function updateCalculateButton() {
             const selectedColumns = document.querySelectorAll('input[name="cols"]:checked');
             const selectedOperation = document.querySelector('input[name="operation"]:checked');
-            
+
             if (selectedColumns.length > 0 && selectedOperation) {
                 calculateBtn.disabled = false;
                 hideError();
@@ -506,7 +515,7 @@
         }
 
         // Form validation
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             const selectedColumns = document.querySelectorAll('input[name="cols"]:checked');
             const selectedOperation = document.querySelector('input[name="operation"]:checked');
 
@@ -529,22 +538,22 @@
 
         // Table row highlighting
         document.querySelectorAll('tr').forEach(row => {
-            row.addEventListener('mouseenter', function() {
+            row.addEventListener('mouseenter', function () {
                 this.style.backgroundColor = '#f0f4ff';
             });
-            
-            row.addEventListener('mouseleave', function() {
+
+            row.addEventListener('mouseleave', function () {
                 this.style.backgroundColor = '';
             });
         });
 
         // Helper function for template (add function)
-        window.add = function(a, b) {
+        window.add = function (a, b) {
             return a + b;
         };
 
         // Helper function to check if array contains value
-        window.contains = function(arr, val) {
+        window.contains = function (arr, val) {
             return arr && arr.includes(val);
         };
     </script>
