@@ -143,8 +143,15 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .submit-btn {
@@ -219,7 +226,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @media (max-width: 768px) {
@@ -227,11 +236,11 @@
                 padding: 2rem 1.5rem;
                 margin: 1rem;
             }
-            
+
             .upload-title {
                 font-size: 1.5rem;
             }
-            
+
             .file-upload-area {
                 padding: 2rem 1rem;
             }
@@ -271,8 +280,6 @@
                     Analyze Spreadsheet
                 </button>
             </form>
-
-           
         </div>
     </main>
 
@@ -302,25 +309,22 @@
             uploadArea.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                handleFileSelect(files[0]);
+                handleFile(files[0]);
             }
         });
 
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-
+        // The click handler for the file input is now the only one responsible for handling the file selection
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                handleFileSelect(e.target.files[0]);
+                handleFile(e.target.files[0]);
             }
         });
 
-        function handleFileSelect(file) {
+        function handleFile(file) {
             // Validate file type
             const allowedTypes = ['.csv', '.xlsx', '.xls'];
             const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-            
+
             if (!allowedTypes.includes(fileExtension)) {
                 alert('Please select a valid file type: CSV, XLSX, or XLS');
                 return;
@@ -338,7 +342,7 @@
             fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
             fileInfo.classList.add('show');
             submitBtn.disabled = false;
-            
+
             // Update upload area appearance
             uploadArea.style.borderColor = '#667eea';
             uploadArea.querySelector('.upload-text').textContent = 'File ready to upload';
