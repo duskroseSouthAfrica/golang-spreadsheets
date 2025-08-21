@@ -6,354 +6,343 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dusk Rose Pty (Ltd) - Analyze Data</title>
     <style>
+        /* Reset & Base */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        @font-face {
-            font-family: 'Duskrose';
-            src: url('duskrose.woff2') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
-
+    
         body {
-            font-family: 'Duskrose';
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #2d3748;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
         }
-
-
-
+    
+        /* Header */
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 1rem 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #e0e0e0;
         }
-
+    
         .header h1 {
-            color: white;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
+            color: #2c3e50;
         }
-
+    
         .breadcrumb {
-            color: rgba(255, 255, 255, 0.8);
+            color: #6c757d;
             font-size: 0.9rem;
         }
-
+    
+        /* Container */
         .container {
             max-width: 95%;
             margin: 2rem auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
-
+    
+        /* Content Header */
         .content-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 2rem;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 1.8rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
         }
-
+    
         .content-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2d3748;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #2c3e50;
             margin-bottom: 0.5rem;
         }
-
+    
         .data-summary {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             margin-top: 1rem;
             flex-wrap: wrap;
         }
-
+    
         .summary-item {
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #f8f9fa;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
             text-align: center;
-            min-width: 120px;
+            min-width: 100px;
         }
-
+    
         .summary-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
         }
-
+    
         .summary-label {
-            font-size: 0.9rem;
-            color: #718096;
+            font-size: 0.85rem;
+            color: #6c757d;
             margin-top: 0.25rem;
         }
-
+    
+        /* Table */
         .table-container {
-            padding: 2rem;
-            overflow-x: auto;
+            padding: 1rem 2rem 2rem;
         }
-
+    
         .table-wrapper {
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
-
+    
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
         }
-
+    
         th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem;
+            background-color: #f1f3f5;
+            color: #495057;
+            padding: 0.75rem 1rem;
             font-weight: 600;
             text-align: left;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            border-bottom: 2px solid #dee2e6;
         }
-
+    
         td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            transition: background-color 0.2s ease;
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
         }
-
+    
         tr:hover td {
-            background-color: #f8fafc;
+            background-color: #f8f9fa;
         }
-
+    
         .numeric-col {
             text-align: right;
-            font-weight: 500;
-            color: #2d5aa0;
+            font-family: Menlo, Monaco, Consolas, monospace;
+            font-size: 0.95rem;
+            color: #1c7ed6;
         }
-
+    
+        /* Calculation Panel */
         .calculation-panel {
-            background: #f8fafc;
+            background: #f8f9fa;
             padding: 2rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid #e0e0e0;
         }
-
+    
         .panel-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.4rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-
-        .columns-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .column-option {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 1rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .column-option:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .column-option.selected {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        .column-checkbox {
-            position: absolute;
-            opacity: 0;
-        }
-
-        .column-label {
-            font-weight: 600;
-            color: #2d3748;
-            display: block;
-            cursor: pointer;
-        }
-
-        .column-preview {
-            font-size: 0.8rem;
-            color: #718096;
-            margin-top: 0.25rem;
-        }
-
+    
+        /* Operation Section */
         .operation-section {
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
         }
-
+    
         .operation-title {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
-            color: #2d3748;
+            color: #495057;
             margin-bottom: 1rem;
         }
-
+    
         .operation-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.8rem;
         }
-
+    
         .operation-option {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 1rem;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.8rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.2s ease;
         }
-
+    
         .operation-option:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
+            border-color: #1c7ed6;
+            background-color: #f8f9fa;
         }
-
+    
         .operation-option.selected {
-            border-color: #667eea;
-            background: #f0f4ff;
+            border-color: #1c7ed6;
+            background-color: #eef7ff;
         }
-
+    
         .operation-radio {
             position: absolute;
             opacity: 0;
         }
-
+    
         .operation-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
         }
-
+    
         .operation-name {
-            font-weight: 600;
-            color: #2d3748;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.95rem;
         }
-
+    
         .operation-desc {
             font-size: 0.8rem;
-            color: #718096;
+            color: #888;
+        }
+    
+        /* Columns Grid */
+        .columns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.8rem;
+        }
+    
+        .column-option {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.8rem;
+            transition: border 0.2s ease;
+            cursor: pointer;
+        }
+    
+        .column-option:hover {
+            border-color: #1c7ed6;
+        }
+    
+        .column-option.selected {
+            border-color: #1c7ed6;
+            background-color: #eef7ff;
+        }
+    
+        .column-checkbox {
+            position: absolute;
+            opacity: 0;
+        }
+    
+        .column-label {
+            font-weight: 500;
+            color: #2c3e50;
+            display: block;
+        }
+    
+        .column-preview {
+            font-size: 0.8rem;
+            color: #888;
             margin-top: 0.25rem;
         }
-
+    
+        /* Buttons */
         .action-buttons {
             display: flex;
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 1rem;
         }
-
+    
         .btn {
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            min-width: 150px;
-            justify-content: center;
         }
-
+    
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #1c7ed6;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    
+        .btn-primary:hover:not(:disabled) {
+            background-color: #1971c2;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(28, 126, 214, 0.2);
         }
-
+    
         .btn-primary:disabled {
-            background: #cbd5e0;
+            background-color: #adb5bd;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
-
+    
         .btn-secondary {
-            background: white;
-            color: #4a5568;
-            border: 2px solid #e2e8f0;
+            background-color: #fff;
+            color: #495057;
+            border: 1px solid #dee2e6;
         }
-
+    
         .btn-secondary:hover {
-            border-color: #cbd5e0;
-            transform: translateY(-2px);
+            border-color: #adb5bd;
+            color: #212529;
         }
-
+    
+        /* Error Message */
         .error-message {
-            background: #fed7d7;
-            color: #c53030;
-            padding: 1rem;
-            border-radius: 8px;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 0.75rem 1rem;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
             margin: 1rem 0;
+            font-size: 0.9rem;
             display: none;
         }
-
+    
+        /* Responsive */
         @media (max-width: 768px) {
             .container {
                 margin: 1rem;
                 max-width: calc(100% - 2rem);
             }
-
-            .content-header {
-                padding: 1.5rem;
-            }
-
-            .table-container {
+    
+            .content-header,
+            .table-container,
+            .calculation-panel {
                 padding: 1rem;
             }
-
-            .calculation-panel {
-                padding: 1.5rem;
-            }
-
+    
             .data-summary {
                 gap: 1rem;
             }
-
+    
+            .operation-grid,
             .columns-grid {
                 grid-template-columns: 1fr;
             }
-
-            .operation-grid {
-                grid-template-columns: 1fr;
+    
+            .btn {
+                min-width: 120px;
             }
         }
     </style>
@@ -431,7 +420,37 @@
                             <input type="radio" name="operation" value="average" class="operation-radio" required>
                             <div class="operation-icon">📊</div>
                             <div class="operation-name">Average</div>
-                            <div class="operation-desc">Calculate mean</div>
+                            <div class="operation-desc">Mean of values</div>
+                        </label>
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="min" class="operation-radio" required>
+                            <div class="operation-icon">🔽</div>
+                            <div class="operation-name">Minimum</div>
+                            <div class="operation-desc">Smallest value</div>
+                        </label>
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="max" class="operation-radio" required>
+                            <div class="operation-icon">🔼</div>
+                            <div class="operation-name">Maximum</div>
+                            <div class="operation-desc">Largest value</div>
+                        </label>
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="median" class="operation-radio" required>
+                            <div class="operation-icon">📏</div>
+                            <div class="operation-name">Median</div>
+                            <div class="operation-desc">Middle value</div>
+                        </label>
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="std" class="operation-radio" required>
+                            <div class="operation-icon">±</div>
+                            <div class="operation-name">Std Dev</div>
+                            <div class="operation-desc">Standard deviation</div>
+                        </label>
+                        <label class="operation-option">
+                            <input type="radio" name="operation" value="count" class="operation-radio" required>
+                            <div class="operation-icon">🔢</div>
+                            <div class="operation-name">Count</div>
+                            <div class="operation-desc">Number of values</div>
                         </label>
                     </div>
                 </div>
